@@ -519,7 +519,14 @@ unsafe impl Sync for Buffer {}
 impl crate::DynBuffer for Buffer {}
 
 impl Buffer {
-    fn as_raw(&self) -> BufferPtr {
+    /// # Safety
+    ///
+    /// - The buffer handle must not be manually destroyed
+    pub unsafe fn raw_handle(&self) -> &metal::Buffer {
+        &self.raw
+    }
+
+    pub fn as_raw(&self) -> BufferPtr {
         unsafe { NonNull::new_unchecked(self.raw.as_ptr()) }
     }
 }
