@@ -1,5 +1,6 @@
 use alloc::{borrow::ToOwned as _, sync::Arc, vec::Vec};
 use core::{ptr::NonNull, sync::atomic};
+use objc2_io_surface::IOSurfaceRef;
 use std::{thread, time};
 
 use bytemuck::TransparentWrapper;
@@ -395,6 +396,88 @@ impl super::Device {
 
     pub fn raw_device(&self) -> &Retained<ProtocolObject<dyn MTLDevice>> {
         &self.shared.device
+    }
+}
+
+impl super::Device {
+    pub unsafe fn create_iosurface_backed_texture(
+        &self,
+        desc: &crate::TextureDescriptor,
+        iosurface: &IOSurfaceRef,
+    ) -> DeviceResult<super::Texture> {
+        {
+            if desc.dimension != wgt::TextureDimension::D2
+                || desc.size.depth_or_array_layers != 1
+                || desc.mip_level_count != 1
+                || desc.sample_count != 1
+                || desc.format != wgt::TextureFormat::Bgra8Unorm
+                || iosurface.width() as u32 != desc.size.width
+                || iosurface.height() as u32 != desc.size.height
+            {
+                return Err(crate::DeviceError::Unexpected);
+            }
+
+            let mtl_format = self
+                .shared
+                .private_texture_format_caps
+                .map_format(desc.format);
+
+            autoreleasepool(|_| {
+                let descriptor = MTLTextureDescriptor::new();
+
+                let mtl_type = match desc.dimension {
+                    wgt::TextureDimension::D1 => MTLTextureType::Type1D,
+                    wgt::TextureDimension::D2 => {
+                        if desc.sample_count > 1 {
+                            unsafe { descriptor.setSampleCount(desc.sample_count as usize) };
+                            MTLTextureType::Type2DMultisample
+                        } else if desc.size.depth_or_array_layers > 1 {
+                            unsafe {
+                                descriptor.setArrayLength(desc.size.depth_or_array_layers as usize)
+                            };
+                            MTLTextureType::Type2DArray
+                        } else {
+                            MTLTextureType::Type2D
+                        }
+                    }
+                    wgt::TextureDimension::D3 => {
+                        unsafe { descriptor.setDepth(desc.size.depth_or_array_layers as usize) };
+                        MTLTextureType::Type3D
+                    }
+                };
+
+                let mtl_storage_mode = MTLStorageMode::Shared;
+                let plane = 0;
+
+                descriptor.setTextureType(mtl_type);
+                unsafe { descriptor.setWidth(desc.size.width as usize) };
+                unsafe { descriptor.setHeight(desc.size.height as usize) };
+                unsafe { descriptor.setMipmapLevelCount(desc.mip_level_count as usize) };
+                descriptor.setPixelFormat(mtl_format);
+                descriptor.setUsage(conv::map_texture_usage(desc.format, desc.usage));
+                descriptor.setStorageMode(mtl_storage_mode);
+
+                let raw = self
+                    .shared
+                    .device
+                    .newTextureWithDescriptor_iosurface_plane(&descriptor, iosurface, plane)
+                    .ok_or(crate::DeviceError::OutOfMemory)?;
+                if let Some(label) = desc.label {
+                    raw.setLabel(Some(&NSString::from_str(label)));
+                }
+
+                self.counters.textures.add(1);
+
+                Ok(super::Texture {
+                    raw,
+                    format: desc.format,
+                    raw_type: mtl_type,
+                    mip_levels: desc.mip_level_count,
+                    array_layers: desc.array_layer_count(),
+                    copy_size: desc.copy_extent(),
+                })
+            })
+        }
     }
 }
 

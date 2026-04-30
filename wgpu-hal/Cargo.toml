@@ -23,10 +23,10 @@ rust-version = "1.87"
 features = ["metal", "vulkan", "gles", "renderdoc"]
 rustdoc-args = ["--cfg", "docsrs"]
 targets = [
-    "x86_64-unknown-linux-gnu",
-    "x86_64-apple-darwin",
-    "x86_64-pc-windows-msvc",
-    "wasm32-unknown-unknown",
+  "x86_64-unknown-linux-gnu",
+  "x86_64-apple-darwin",
+  "x86_64-pc-windows-msvc",
+  "wasm32-unknown-unknown",
 ]
 
 [package.metadata.cargo-machete]
@@ -35,8 +35,8 @@ ignored = ["cfg_aliases"]
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = [
-    'cfg(feature, values("cargo-clippy"))', # objc's `msg_send` macro injects this in our code https://github.com/SSheldon/rust-objc/issues/125
-    'cfg(web_sys_unstable_apis)',           # web-sys uses this
+  'cfg(feature, values("cargo-clippy"))', # objc's `msg_send` macro injects this in our code https://github.com/SSheldon/rust-objc/issues/125
+  'cfg(web_sys_unstable_apis)',           # web-sys uses this
 ] }
 
 [lib]
@@ -71,94 +71,95 @@ unexpected_cfgs = { level = "warn", check-cfg = [
 
 ## Enables the Metal backend when targeting Apple platforms.
 metal = [
-    # Metal is only available on Apple platforms, therefore request MSL output also only if we target an Apple platform.
-    "naga/msl-out",
-    "dep:arrayvec",
-    "dep:block2",
-    "dep:bytemuck",
-    "dep:hashbrown",
-    "dep:libc",
-    "dep:objc2",
-    "dep:objc2-core-foundation",
-    "dep:objc2-foundation",
-    "dep:objc2-metal",
-    "dep:objc2-quartz-core",
-    "dep:parking_lot",
-    "dep:profiling",
-    "dep:smallvec",
-    "dep:raw-window-metal",
+  # Metal is only available on Apple platforms, therefore request MSL output also only if we target an Apple platform.
+  "naga/msl-out",
+  "dep:arrayvec",
+  "dep:block2",
+  "dep:bytemuck",
+  "dep:hashbrown",
+  "dep:libc",
+  "dep:objc2",
+  "dep:objc2-core-foundation",
+  "dep:objc2-foundation",
+  "dep:objc2-metal",
+  "dep:objc2-quartz-core",
+  "dep:objc2-io-surface",
+  "dep:parking_lot",
+  "dep:profiling",
+  "dep:smallvec",
+  "dep:raw-window-metal",
 ]
 vulkan = [
-    "naga/spv-out",
-    "dep:android_system_properties",
-    "dep:arrayvec",
-    "dep:ash",
-    "dep:bytemuck",
-    "dep:gpu-descriptor",
-    "dep:hashbrown",
-    "dep:libc",
-    "dep:libloading",
-    "dep:ordered-float",
-    "dep:parking_lot",
-    "dep:profiling",
-    "dep:raw-window-metal",
-    "dep:smallvec",
-    "dep:windows",
-    "gpu-allocator/vulkan",
-    "windows/Win32",
+  "naga/spv-out",
+  "dep:android_system_properties",
+  "dep:arrayvec",
+  "dep:ash",
+  "dep:bytemuck",
+  "dep:gpu-descriptor",
+  "dep:hashbrown",
+  "dep:libc",
+  "dep:libloading",
+  "dep:ordered-float",
+  "dep:parking_lot",
+  "dep:profiling",
+  "dep:raw-window-metal",
+  "dep:smallvec",
+  "dep:windows",
+  "gpu-allocator/vulkan",
+  "windows/Win32",
 ]
 gles = [
-    "naga/glsl-out",
-    "dep:arrayvec",
-    "dep:bytemuck",
-    "dep:glow",
-    "dep:glutin_wgl_sys",
-    "dep:hashbrown",
-    "dep:js-sys",
-    "dep:khronos-egl",
-    "dep:wayland-sys",
-    "dep:libloading",
-    "dep:ndk-sys",
-    "dep:objc2",
-    "dep:parking_lot",
-    "dep:profiling",
-    "dep:wasm-bindgen",
-    "dep:web-sys",
-    "wgpu-types/web",
-    "windows/Win32_Graphics_OpenGL",
-    "windows/Win32_Graphics_Gdi",
-    "windows/Win32_System_LibraryLoader",
-    "windows/Win32_UI_WindowsAndMessaging",
+  "naga/glsl-out",
+  "dep:arrayvec",
+  "dep:bytemuck",
+  "dep:glow",
+  "dep:glutin_wgl_sys",
+  "dep:hashbrown",
+  "dep:js-sys",
+  "dep:khronos-egl",
+  "dep:wayland-sys",
+  "dep:libloading",
+  "dep:ndk-sys",
+  "dep:objc2",
+  "dep:parking_lot",
+  "dep:profiling",
+  "dep:wasm-bindgen",
+  "dep:web-sys",
+  "wgpu-types/web",
+  "windows/Win32_Graphics_OpenGL",
+  "windows/Win32_Graphics_Gdi",
+  "windows/Win32_System_LibraryLoader",
+  "windows/Win32_UI_WindowsAndMessaging",
 ]
 ## Enables the DX12 backend when targeting Windows.
 dx12 = [
-    "naga/hlsl-out",
-    "dep:arrayvec",
-    "dep:bit-set",
-    "dep:bytemuck",
-    "dep:hashbrown",
-    "dep:libloading",
-    "dep:ordered-float",
-    "dep:once_cell",
-    "dep:parking_lot",
-    "dep:profiling",
-    "dep:range-alloc",
-    "dep:windows-core",
-    "dep:gpu-allocator",
-    "gpu-allocator/d3d12",
-    "windows/Win32_Devices_DeviceAndDriverInstallation",
-    "windows/Win32_Graphics_Direct3D_Fxc",
-    "windows/Win32_Graphics_Direct3D_Dxc",
-    "windows/Win32_Graphics_Direct3D",
-    "windows/Win32_Graphics_Direct3D12",
-    "windows/Win32_Graphics_DirectComposition",
-    "windows/Win32_Graphics_Dxgi_Common",
-    "windows/Win32_Security",
-    "windows/Win32_System_Diagnostics_Debug",
-    "windows/Win32_System_Kernel",
-    "windows/Win32_System_Performance",
-    "windows/Win32_System_Threading",
-    "windows/Win32_UI_WindowsAndMessaging",
+  "naga/hlsl-out",
+  "dep:arrayvec",
+  "dep:bit-set",
+  "dep:bytemuck",
+  "dep:hashbrown",
+  "dep:libloading",
+  "dep:ordered-float",
+  "dep:once_cell",
+  "dep:parking_lot",
+  "dep:profiling",
+  "dep:range-alloc",
+  "dep:windows-core",
+  "dep:gpu-allocator",
+  "gpu-allocator/d3d12",
+  "windows/Win32_Devices_DeviceAndDriverInstallation",
+  "windows/Win32_Graphics_Direct3D_Fxc",
+  "windows/Win32_Graphics_Direct3D_Dxc",
+  "windows/Win32_Graphics_Direct3D",
+  "windows/Win32_Graphics_Direct3D12",
+  "windows/Win32_Graphics_DirectComposition",
+  "windows/Win32_Graphics_Dxgi_Common",
+  "windows/Win32_Security",
+  "windows/Win32_System_Diagnostics_Debug",
+  "windows/Win32_System_Kernel",
+  "windows/Win32_System_Performance",
+  "windows/Win32_System_Threading",
+  "windows/Win32_UI_WindowsAndMessaging",
 ]
 
 ###########################
@@ -168,7 +169,7 @@ dx12 = [
 static-dxc = ["dep:mach-dxcompiler-rs"]
 renderdoc = ["dep:libloading", "dep:renderdoc-sys"]
 fragile-send-sync-non-atomic-wasm = [
-    "wgpu-types/fragile-send-sync-non-atomic-wasm",
+  "wgpu-types/fragile-send-sync-non-atomic-wasm",
 ]
 portable-atomic = ["dep:portable-atomic", "dep:portable-atomic-util"]
 
@@ -246,9 +247,9 @@ renderdoc-sys = { workspace = true, optional = true }
 libc = { workspace = true, optional = true }
 # backend: GLES
 wayland-sys = { version = "0.31.3", features = [
-    "client",
-    "dlopen",
-    "egl",
+  "client",
+  "dlopen",
+  "egl",
 ], optional = true }
 
 #########################
@@ -286,6 +287,7 @@ objc2 = { workspace = true, optional = true }
 objc2-core-foundation = { workspace = true, optional = true }
 objc2-foundation = { workspace = true, optional = true }
 objc2-metal = { workspace = true, optional = true }
+objc2-io-surface = { workspace = true, optional = true }
 objc2-quartz-core = { workspace = true, optional = true }
 
 # backend: Metal + Vulkan
@@ -307,11 +309,11 @@ ndk-sys = { workspace = true, optional = true }
 # Backend: GLES
 wasm-bindgen = { workspace = true, optional = true }
 web-sys = { workspace = true, optional = true, features = [
-    "default",
-    "Window",
-    "HtmlCanvasElement",
-    "WebGl2RenderingContext",
-    "OffscreenCanvas",
+  "default",
+  "Window",
+  "HtmlCanvasElement",
+  "WebGl2RenderingContext",
+  "OffscreenCanvas",
 ] }
 js-sys = { workspace = true, optional = true, default-features = true }
 
@@ -322,8 +324,8 @@ js-sys = { workspace = true, optional = true, default-features = true }
 [target.'cfg(target_os = "emscripten")'.dependencies]
 # Backend: GLES
 khronos-egl = { workspace = true, optional = true, features = [
-    "static",
-    "no-pkg-config",
+  "static",
+  "no-pkg-config",
 ] }
 # Note: it's unused by emscripten, but we keep it to have single code base in egl.rs
 libloading = { workspace = true, optional = true }
@@ -333,7 +335,7 @@ portable-atomic = { workspace = true, optional = true }
 
 [target.'cfg(not(target_has_atomic = "ptr"))'.dependencies]
 portable-atomic-util = { workspace = true, features = [
-    "alloc",
+  "alloc",
 ], optional = true }
 
 [build-dependencies]
