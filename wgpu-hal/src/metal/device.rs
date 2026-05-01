@@ -406,11 +406,15 @@ impl super::Device {
         iosurface: &IOSurfaceRef,
     ) -> DeviceResult<super::Texture> {
         {
+            let supported_format = matches!(
+                desc.format,
+                wgt::TextureFormat::Bgra8Unorm | wgt::TextureFormat::R8Unorm
+            );
             if desc.dimension != wgt::TextureDimension::D2
                 || desc.size.depth_or_array_layers != 1
                 || desc.mip_level_count != 1
                 || desc.sample_count != 1
-                || desc.format != wgt::TextureFormat::Bgra8Unorm
+                || !supported_format
                 || iosurface.width() as u32 != desc.size.width
                 || iosurface.height() as u32 != desc.size.height
             {
